@@ -8,7 +8,7 @@ How to install:
 
 How to uninstall:
 -----------------
-1. Delete 'ewChunkNotifier.jar'
+1. Delete 'NewChunkNotifier.jar'
 
 Permission nodes:
 -----------------
