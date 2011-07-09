@@ -1,0 +1,4 @@
+name: NewChunkNotifier
+main: com.pandemoneus.newChunkNotifier.NewChunkNotifier
+version: 1.00
+author: 'Pandemoneus'
