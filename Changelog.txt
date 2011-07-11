@@ -1,3 +1,6 @@
+Version 1.02
+- Fixed config being 'outdated' all the time
+
 Version 1.01
 - Added cooldown to messages (default: 3 seconds)
 - Added option to print to console

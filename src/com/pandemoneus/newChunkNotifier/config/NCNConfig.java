@@ -45,7 +45,6 @@ public final class NCNConfig {
 	public NCNConfig(NewChunkNotifier plugin) {
 		this.plugin = plugin;
 		pluginName = NewChunkNotifier.getPluginName();
-		pluginVersion = NewChunkNotifier.getVersion();
 	}
 
 	/**
@@ -55,12 +54,13 @@ public final class NCNConfig {
 	 */
 	public boolean loadConfig() {
 		boolean isErrorFree = true;
+		pluginVersion = NewChunkNotifier.getVersion();
 
 		new File(directory).mkdir();
 
 		if (configFile.exists()) {
-			if (bukkitConfig.getString("Version", "").equals(
-					NewChunkNotifier.getVersion())) {
+			bukkitConfig.load();
+			if (bukkitConfig.getString("Version", "").equals(pluginVersion)) {
 				// config file exists and is up to date
 				Log.info(pluginName + " config file found, loading config...");
 				loadData();

@@ -3,6 +3,7 @@ package com.pandemoneus.newChunkNotifier;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -31,7 +32,7 @@ public class NewChunkNotifier extends JavaPlugin {
 	private PermissionHandler permissionsHandler;
 	private boolean permissionsFound = false;
 
-	private static final String VERSION = "1.01";
+	private static String version;
 	private static final String PLUGIN_NAME = "NewChunkNotifier";
 
 	/**
@@ -47,7 +48,10 @@ public class NewChunkNotifier extends JavaPlugin {
 	 */
 	@Override
 	public void onEnable() {
-		Log.info(PLUGIN_NAME + " v" + VERSION + " enabled");
+		PluginDescriptionFile pdfFile = getDescription();
+		version = pdfFile.getVersion();
+		
+		Log.info(PLUGIN_NAME + " v" + version + " enabled");
 
 		getCommand("newchunknotifier").setExecutor(cmdExecutor);
 		getCommand("ncn").setExecutor(cmdExecutor);
@@ -69,7 +73,7 @@ public class NewChunkNotifier extends JavaPlugin {
 	 * @return the version of the plugin
 	 */
 	public static String getVersion() {
-		return VERSION;
+		return version;
 	}
 
 	/**
