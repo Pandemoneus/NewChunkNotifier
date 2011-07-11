@@ -17,9 +17,12 @@ import com.pandemoneus.newChunkNotifier.logger.Log;
  */
 public final class NCNWorldListener extends WorldListener {
 	private NewChunkNotifier plugin;
+	private long cooldown = 3000;
+	private long before = 0;
+	private boolean printLogsToConsole = true;
 
 	/**
-	 * Associates this object with a plugin
+	 * Associates this object with a plugin.
 	 * 
 	 * @param plugin
 	 *            the plugin
@@ -33,32 +36,65 @@ public final class NCNWorldListener extends WorldListener {
 	 */
 	public void onChunkLoad(ChunkLoadEvent event) {
 		if (event.isNewChunk()) {
-			List<Player> players = event.getWorld().getPlayers();
-
-			Log.info("New chunk created at " + event.getChunk().getX() + ", "
-					+ event.getChunk().getZ());
-
-			if (plugin.getPermissionsFound()) {
-				PermissionHandler ph = plugin.getPermissionsHandler();
-
-				for (Player p : players) {
-					if (ph.has(p, "newchunknotifier.notifyme")) {
-						p.sendMessage(ChatColor.GOLD
-								+ "NOTICE: New chunk created at "
-								+ event.getChunk().getX() + ", "
-								+ event.getChunk().getZ());
+			
+			if (printLogsToConsole) {
+				Log.info("New chunk created at " + event.getChunk().getX() + ", "
+						+ event.getChunk().getZ() + " in world '" + event.getWorld().getName() + "'");
+			}
+			
+			long after = System.currentTimeMillis();
+			
+			if (after - before >= cooldown) {
+				List<Player> players = event.getWorld().getPlayers();
+	
+				if (plugin.getPermissionsFound()) {
+					PermissionHandler ph = plugin.getPermissionsHandler();
+	
+					for (Player p : players) {
+						if (ph.has(p, "newchunknotifier.notifyme")) {
+							p.sendMessage(ChatColor.GOLD
+									+ "NOTICE: New chunk created at "
+									+ event.getChunk().getX() + ", "
+									+ event.getChunk().getZ() + " in world '" + event.getWorld().getName() + "'");
+						}
+					}
+				} else {
+					for (Player p : players) {
+						if (p.isOp()) {
+							p.sendMessage(ChatColor.GOLD
+									+ "NOTICE: New chunk created at "
+									+ event.getChunk().getX() + ", "
+									+ event.getChunk().getZ() + " in world '" + event.getWorld().getName() + "'");
+						}
 					}
 				}
-			} else {
-				for (Player p : players) {
-					if (p.isOp()) {
-						p.sendMessage(ChatColor.GOLD
-								+ "NOTICE: New chunk created at "
-								+ event.getChunk().getX() + ", "
-								+ event.getChunk().getZ());
-					}
-				}
+				
+				before = System.currentTimeMillis();
 			}
 		}
+	}
+	
+	/**
+	 * Sets the cooldown time (in milliseconds) between messages.
+	 * 
+	 * @param cooldown the cooldown time in milliseconds
+	 */
+	public void setCooldown(long cooldown) {
+		long tmp = cooldown;
+		
+		if (tmp < 0) {
+			tmp = 0;
+		}
+		
+		this.cooldown = tmp;
+	}
+	
+	/**
+	 * Determines whether messages should be print to the server console.
+	 * 
+	 * @param print when true, prints messages in the console, otherwise not
+	 */
+	public void setPrintLogsToConsole(boolean print) {
+		printLogsToConsole = print;
 	}
 }

@@ -8,6 +8,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
+import com.pandemoneus.newChunkNotifier.commands.NCNCommands;
+import com.pandemoneus.newChunkNotifier.config.NCNConfig;
 import com.pandemoneus.newChunkNotifier.logger.Log;
 
 /**
@@ -23,11 +25,13 @@ public class NewChunkNotifier extends JavaPlugin {
 	/**
 	 * Plugin related stuff
 	 */
+	private final NCNCommands cmdExecutor = new NCNCommands(this);
+	private NCNConfig config = new NCNConfig(this);
 	private final NCNWorldListener worldListener = new NCNWorldListener(this);
 	private PermissionHandler permissionsHandler;
 	private boolean permissionsFound = false;
 
-	private static final String VERSION = "1.00";
+	private static final String VERSION = "1.01";
 	private static final String PLUGIN_NAME = "NewChunkNotifier";
 
 	/**
@@ -45,7 +49,13 @@ public class NewChunkNotifier extends JavaPlugin {
 	public void onEnable() {
 		Log.info(PLUGIN_NAME + " v" + VERSION + " enabled");
 
+		getCommand("newchunknotifier").setExecutor(cmdExecutor);
+		getCommand("ncn").setExecutor(cmdExecutor);
+		
 		setupPermissions();
+		config.loadConfig();
+		worldListener.setCooldown(config.getCooldown());
+		worldListener.setPrintLogsToConsole(config.getPrintLogsToConsole());
 
 		PluginManager pm = getServer().getPluginManager();
 
@@ -119,5 +129,27 @@ public class NewChunkNotifier extends JavaPlugin {
 
 		permissionsFound = true;
 		permissionsHandler = ((Permissions) permissionsPlugin).getHandler();
+	}
+	
+	/**
+	 * Method that handles what gets reloaded
+	 * 
+	 * @return true if everything loaded properly, otherwise false
+	 */
+	public boolean reload() {
+		boolean success = config.loadConfig();
+		worldListener.setCooldown(config.getCooldown());
+		worldListener.setPrintLogsToConsole(config.getPrintLogsToConsole());
+		
+		return success;
+	}
+	
+	/**
+	 * Returns the plugin's config object.
+	 * 
+	 * @return the plugin's config object
+	 */
+	public NCNConfig getConfig() {
+		return config;
 	}
 }

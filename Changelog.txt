@@ -1,0 +1,8 @@
+Version 1.01
+- Added cooldown to messages (default: 3 seconds)
+- Added option to print to console
+- Added commands to reload the config ingame
+- Messages now display the world the chunk is created in
+
+Version 1.00
+- Initial release
